@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theo Dõi Thuê Mặt Bằng</title>
+<style>
+:root {
+  --bg:#f5f6fa; --surface:#fff; --surface2:#f0f1f7; --border:#e2e4ef;
+  --text-primary:#1a1d2e; --text-secondary:#5a5f7d; --text-muted:#9499b5;
+  --accent:#4361ee; --accent-light:#eef0fd;
+  --ok:#2d9e6b; --ok-bg:#edfaf4;
+  --warn:#d97706; --warn-bg:#fffbeb;
+  --danger:#dc2626; --danger-bg:#fef2f2;
+  --critical:#7c3aed; --critical-bg:#f5f3ff;
+  --shadow:0 1px 4px rgba(26,29,46,.08); --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+.header h1{font-size:17px;font-weight:700}
+.header p{font-size:12px;color:var(--text-muted);margin-top:1px}
+.btn{padding:8px 16px;border-radius:7px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#3451d1}
+.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}.btn-outline:hover{background:var(--accent-light)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;padding:18px 24px 0}
+.kpi{background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.kpi-value{font-size:24px;font-weight:800;margin-top:4px}
+.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.kv-blue{color:var(--accent)}.kv-warn{color:var(--warn)}.kv-danger{color:var(--danger)}.kv-ok{color:var(--ok)}
+.alert-bar{margin:14px 24px 0;padding:10px 16px;border-radius:9px;display:flex;align-items:flex-start;gap:10px;font-size:13px;flex-wrap:wrap}
+.alert-bar.warn{background:var(--warn-bg);border:1px solid #fcd34d;color:#92400e}
+.alert-bar.danger{background:var(--danger-bg);border:1px solid #fca5a5;color:#991b1b}
+.alert-items{display:flex;flex-direction:column;gap:4px;flex:1}
+.alert-row{font-size:12px}
+.toolbar{padding:14px 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap input{width:100%;padding:8px 12px 8px 32px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;background:var(--surface)}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px}
+select.filter{padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;background:var(--surface);color:var(--text-primary);cursor:pointer}
+select.filter:focus{border-color:var(--accent)}
+.table-wrap{padding:0 24px 24px;overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border)}
+thead th{background:var(--surface2);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{background:#e8eaf4}
+.sort-icon{margin-left:3px;opacity:.4}
+thead th.sorted .sort-icon{opacity:1;color:var(--accent)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8f9fe}
+tbody td{padding:10px 12px;font-size:13px;vertical-align:middle}
+.location-cell{font-weight:600}
+.location-cell small{display:block;font-weight:400;color:var(--text-muted);font-size:11px;margin-top:1px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-ok{background:var(--ok-bg);color:var(--ok)}
+.badge-warn{background:var(--warn-bg);color:var(--warn)}
+.badge-danger{background:var(--danger-bg);color:var(--danger)}
+.badge-critical{background:var(--critical-bg);color:var(--critical)}
+.badge-blue{background:var(--accent-light);color:var(--accent)}
+.days-bar{display:flex;align-items:center;gap:7px}
+.bar-track{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden;min-width:50px}
+.bar-fill{height:100%;border-radius:99px;transition:width .3s}
+.bar-green{background:var(--ok)}.bar-yellow{background:var(--warn)}.bar-red{background:var(--danger)}.bar-purple{background:var(--critical)}
+.days-num{font-size:12px;font-weight:700;min-width:28px;text-align:right}
+.rent-cell{display:flex;flex-direction:column;gap:2px}
+.rent-current{font-weight:700;font-size:13px}
+.rent-stage-badge{font-size:10px;padding:1px 7px;border-radius:9px}
+.rent-upcoming{font-size:10px;color:var(--warn);margin-top:1px}
+.pay-cell{display:flex;flex-direction:column;gap:2px}
+.pay-date{font-weight:600;font-size:13px}
+.actions-cell{display:flex;gap:5px;flex-wrap:wrap}
+.action-btn{padding:4px 9px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.action-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.action-btn.red:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-bg)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,29,46,.5);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:14px;padding:24px;width:600px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h2{font-size:16px;font-weight:700;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.modal-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:18px}
+.modal-tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text-secondary);border:none;transition:all .15s}
+.modal-tab.active{background:var(--accent);color:#fff}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group.full{grid-column:1/-1}
+label.lbl{font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px}
+.form-group input,.form-group select,.form-group textarea{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;color:var(--text-primary);background:var(--surface)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.stages-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stages-header h3{font-size:13px;font-weight:700;color:var(--text-secondary)}
+.stage-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;padding:10px;background:var(--bg);border-radius:8px;margin-bottom:7px;border:1px solid var(--border)}
+.stage-row .del-btn{padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;color:var(--text-muted);font-size:13px;transition:all .15s;align-self:flex-end}
+.stage-row .del-btn:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-bg)}
+.empty-stages{text-align:center;padding:20px;color:var(--text-muted);font-size:12px;border:1.5px dashed var(--border);border-radius:8px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--text-primary);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;z-index:300;transform:translateY(60px);opacity:0;transition:all .25s}
+.toast.show{transform:translateY(0);opacity:1}
+.reminder-panel{margin:14px 24px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.reminder-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;background:var(--surface2)}
+.reminder-header h3{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.reminder-body{padding:12px 16px;display:none}
+.reminder-body.open{display:block}
+.reminder-list{display:flex;flex-direction:column;gap:7px}
+.reminder-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:12px}
+.reminder-item.r-danger{background:var(--danger-bg);border:1px solid #fca5a5}
+.reminder-item.r-warn{background:var(--warn-bg);border:1px solid #fcd34d}
+.reminder-icon{font-size:16px;flex-shrink:0}
+.reminder-text{flex:1}
+.reminder-text strong{display:block;font-size:12px;font-weight:700}
+.reminder-text span{color:var(--text-secondary)}
+.empty{text-align:center;padding:40px 24px;color:var(--text-muted)}
+@media(max-width:600px){
+  .kpi-row,.toolbar,.table-wrap,.reminder-panel,.alert-bar{padding-left:14px;padding-right:14px;margin-left:0;margin-right:0}
+  .kpi-row{padding:14px 14px 0}
+  .reminder-panel{margin:14px 14px 0}
+  .alert-bar{margin:14px 14px 0}
+  .form-grid{grid-template-columns:1fr}
+  .stage-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">🏪</div>
+    <div>
+      <h1>Theo Dõi Thuê Mặt Bằng</h1>
+      <p id="todayLabel"></p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-outline" onclick="exportCSV()">⬇ Xuất CSV</button>
+    <button class="btn btn-outline" onclick="resetData()" style="color:#d97706;border-color:#d97706">🔄 Reset dữ liệu mẫu</button>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Thêm địa điểm</button>
+  </div>
+</div>
+
+<div id="alertContainer"></div>
+
+<div class="reminder-panel" id="reminderPanel">
+  <div class="reminder-header" onclick="toggleReminder()">
+    <h3>🔔 Nhắc lịch thanh toán <span id="reminderCount" class="badge badge-danger" style="font-size:11px"></span></h3>
+    <span id="reminderToggleIcon" style="font-size:12px;color:var(--text-muted)">▼ Mở rộng</span>
+  </div>
+  <div class="reminder-body" id="reminderBody">
+    <div class="reminder-list" id="reminderList"></div>
+  </div>
+</div>
+
+<div class="kpi-row" id="kpiRow"></div>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-ico">🔍</span>
+    <input type="text" id="searchInput" placeholder="Tìm kiếm địa điểm, địa chỉ..." oninput="renderTable()">
+  </div>
+  <select class="filter" id="filterStatus" onchange="renderTable()">
+    <option value="">Tất cả trạng thái HĐ</option>
+    <option value="ok">Bình thường (> 90 ngày)</option>
+    <option value="warn">Sắp hết hạn (31–90 ngày)</option>
+    <option value="danger">Gần hết hạn (≤ 30 ngày)</option>
+    <option value="expired">Đã hết hạn</option>
+  </select>
+  <select class="filter" id="filterPay" onchange="renderTable()">
+    <option value="">Tất cả thanh toán</option>
+    <option value="overdue">Trễ / cần xử lý</option>
+    <option value="soon3">Trong 3 ngày tới</option>
+    <option value="soon7">Trong 7 ngày tới</option>
+    <option value="ok">Bình thường</option>
+  </select>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sortBy('name')">Địa điểm <span class="sort-icon" id="sort-name">↕</span></th>
+        <th onclick="sortBy('endDate')">Hết hạn HĐ <span class="sort-icon" id="sort-endDate">↕</span></th>
+        <th onclick="sortBy('daysLeft')">Thời hạn còn lại <span class="sort-icon" id="sort-daysLeft">↕</span></th>
+        <th onclick="sortBy('currentRent')">Tiền thuê hiện tại <span class="sort-icon" id="sort-currentRent">↕</span></th>
+        <th onclick="sortBy('nextPayDate')">Thanh toán tiếp theo <span class="sort-icon" id="sort-nextPayDate">↕</span></th>
+        <th>TT HĐ</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div id="emptyMsg" class="empty" style="display:none">Không tìm thấy địa điểm nào.</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="bgClose(event)">
+<div class="modal">
+  <h2 id="modalTitle">➕ Thêm địa điểm</h2>
+  <div class="modal-tabs">
+    <button class="modal-tab active" onclick="switchTab('tab-info',this)">📋 Thông tin HĐ</button>
+    <button class="modal-tab" onclick="switchTab('tab-stages',this)">💰 Bảng giá thuê</button>
+    <button class="modal-tab" onclick="switchTab('tab-pay',this)">🗓 Thanh toán</button>
+  </div>
+  <div class="tab-panel active" id="tab-info">
+    <div class="form-grid">
+      <div class="form-group full"><label class="lbl">Tên địa điểm / cửa hàng *</label>
+        <input id="f-name" type="text" placeholder="VD: Cửa hàng Quận 1 – Lê Lợi"></div>
+      <div class="form-group full"><label class="lbl">Địa chỉ</label>
+        <input id="f-address" type="text" placeholder="Số nhà, đường, quận/huyện"></div>
+      <div class="form-group"><label class="lbl">Ngày bắt đầu HĐ *</label>
+        <input id="f-start" type="date"></div>
+      <div class="form-group"><label class="lbl">Ngày kết thúc HĐ *</label>
+        <input id="f-end" type="date"></div>
+      <div class="form-group"><label class="lbl">Chủ nhà / Liên hệ</label>
+        <input id="f-landlord" type="text" placeholder="Họ tên chủ nhà"></div>
+      <div class="form-group"><label class="lbl">Số điện thoại</label>
+        <input id="f-phone" type="text" placeholder="0912..."></div>
+      <div class="form-group full"><label class="lbl">Ghi chú hợp đồng</label>
+        <textarea id="f-note" rows="2" placeholder="Điều khoản đặc biệt, ghi chú..."></textarea></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tab-stages">
+    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;padding:10px 12px;background:var(--accent-light);border-radius:8px;border-left:3px solid var(--accent)">
+      💡 Thêm từng giai đoạn giá thuê. Hệ thống tự hiển thị giá hiện hành và cảnh báo sắp sang giai đoạn mới.
+    </div>
+    <div class="stages-header">
+      <h3>Các giai đoạn giá thuê</h3>
+      <button class="btn btn-primary btn-sm" onclick="addStageRow()">+ Thêm giai đoạn</button>
+    </div>
+    <div id="stagesList"><div class="empty-stages">Chưa có giai đoạn nào. Nhấn "+ Thêm giai đoạn" để bắt đầu.</div></div>
+    <div id="stagesError" style="color:#dc2626;font-size:12px;margin-top:8px;min-height:16px"></div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">💡 Giai đoạn tự sắp theo thời gian và kiểm tra chồng lấn khi lưu.</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:8px">
+      ※ Nếu không có giai đoạn, nhập giá thuê cơ bản:<br>
+      <div style="margin-top:8px;display:flex;gap:12px;align-items:center">
+        <label class="lbl" style="white-space:nowrap">Giá thuê cơ bản</label>
+        <input id="f-rent-base" type="number" placeholder="VNĐ/tháng" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;width:180px">
+      </div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tab-pay">
+    <div class="form-grid">
+      <div class="form-group"><label class="lbl">Chu kỳ thanh toán</label>
+        <select id="f-cycle">
+          <option value="1">Hàng tháng</option>
+          <option value="3">Hàng quý (3 tháng)</option>
+          <option value="6">Nửa năm (6 tháng)</option>
+          <option value="12">Hàng năm (12 tháng)</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="lbl">Ngày TT trong tháng</label>
+        <input id="f-payDay" type="number" min="1" max="28" value="5"></div>
+      <div class="form-group full" style="background:var(--warn-bg);border:1px solid #fcd34d;border-radius:8px;padding:12px">
+        <label class="lbl" style="color:var(--warn)">🔔 Nhắc trước khi đến hạn TT</label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+          <input id="f-remindDays" type="number" min="1" max="30" value="3" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;width:80px">
+          <span style="font-size:13px;color:var(--text-secondary)">ngày trước ngày thanh toán</span>
+        </div>
+      </div>
+      <div class="form-group full"><label class="lbl">Phương thức thanh toán</label>
+        <select id="f-payMethod">
+          <option value="">-- Chọn --</option>
+          <option value="Chuyển khoản">Chuyển khoản ngân hàng</option>
+          <option value="Tiền mặt">Tiền mặt</option>
+          <option value="Ủy nhiệm chi">Ủy nhiệm chi</option>
+        </select>
+      </div>
+      <div class="form-group full"><label class="lbl">Ghi chú thanh toán</label>
+        <textarea id="f-payNote" rows="2" placeholder="VD: Thanh toán trước ngày 5..."></textarea></div>
+    </div>
+  </div>
+  <div class="modal-actions">
+    <button class="btn btn-outline" id="deleteBtn" style="display:none;margin-right:auto;color:var(--danger);border-color:var(--danger)" onclick="deleteLocation()">🗑 Xóa</button>
+    <button class="btn btn-outline" onclick="closeModal()">Hủy</button>
+    <button class="btn btn-primary" onclick="saveLocation()">💾 Lưu</button>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="confirmOverlay" style="display:none;position:fixed;inset:0;background:rgba(26,29,46,.5);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:28px 24px;width:360px;max-width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">🗑</div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px">Xác nhận xóa</div>
+    <div id="confirmMsg" style="font-size:13px;color:#5a5f7d;margin-bottom:20px"></div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button onclick="cancelConfirm()" style="padding:9px 20px;border-radius:7px;border:1.5px solid #e2e4ef;background:#fff;font-size:13px;font-weight:600;cursor:pointer">Huỷ</button>
+      <button id="confirmOkBtn" style="padding:9px 20px;border-radius:7px;border:none;background:#dc2626;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Xóa</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+function pad(n){return String(n).padStart(2,'0')}
+function fmt(d){if(!d)return'';const dt=new Date(d);return`${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()}`}
+function parseD(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);return d}
+function fmtMoney(n){if(!n&&n!==0)return'—';return new Intl.NumberFormat('vi-VN').format(n)+' đ'}
+function daysLeft(endDate){return Math.round((parseD(endDate)-TODAY)/86400000)}
+document.getElementById('todayLabel').textContent=`Hôm nay: ${fmt(TODAY)} | Quản lý hợp đồng & lịch thanh toán`;
+
+const DEFAULT_DATA=[
+  {id:1,name:"CH Quận 1 – Lê Lợi",address:"123 Lê Lợi, Q.1, TP.HCM",startDate:"2025-01-01",endDate:"2028-12-31",stages:[{from:"2025-01-01",to:"2026-12-31",rent:26000000},{from:"2027-01-01",to:"2028-12-31",rent:28000000}],rentBase:0,cycle:1,payDay:5,remindDays:3,landlord:"Nguyễn Văn A",phone:"0901234501",payMethod:"Chuyển khoản",payNote:"",note:"Hợp đồng 4 năm, tăng ~8%/năm"},
+  {id:2,name:"CH Quận 3 – Võ Văn Tần",address:"45 Võ Văn Tần, Q.3, TP.HCM",startDate:"2024-07-01",endDate:"2027-06-30",stages:[{from:"2024-07-01",to:"2025-06-30",rent:20000000},{from:"2025-07-01",to:"2027-06-30",rent:22000000}],rentBase:0,cycle:3,payDay:1,remindDays:3,landlord:"Trần Thị B",phone:"",payMethod:"Tiền mặt",payNote:"",note:""},
+  {id:3,name:"CH Bình Thạnh – Đinh Tiên Hoàng",address:"78 Đinh Tiên Hoàng, Q.BT",startDate:"2024-01-01",endDate:"2026-12-31",stages:[],rentBase:18500000,cycle:1,payDay:10,remindDays:3,landlord:"Lê Văn C",phone:"",payMethod:"",payNote:"",note:"Có bãi đậu xe riêng"},
+  {id:4,name:"CH Thủ Đức – Võ Văn Ngân",address:"22 Võ Văn Ngân, TP.Thủ Đức",startDate:"2024-03-01",endDate:"2027-02-28",stages:[{from:"2024-03-01",to:"2025-08-31",rent:13000000},{from:"2025-09-01",to:"2027-02-28",rent:15000000}],rentBase:0,cycle:1,payDay:5,remindDays:3,landlord:"Phạm Thị D",phone:"",payMethod:"",payNote:"",note:""},
+  {id:5,name:"CH Tân Bình – Cộng Hòa",address:"156 Cộng Hòa, Q.Tân Bình",startDate:"2025-06-01",endDate:"2028-05-31",stages:[],rentBase:19000000,cycle:1,payDay:5,remindDays:3,landlord:"Hoàng Văn E",phone:"",payMethod:"",payNote:"",note:""},
+  {id:6,name:"CH Gò Vấp – Quang Trung",address:"89 Quang Trung, Q.Gò Vấp",startDate:"2025-01-01",endDate:"2027-12-31",stages:[{from:"2025-01-01",to:"2025-12-31",rent:12000000},{from:"2026-01-01",to:"2027-12-31",rent:14000000}],rentBase:0,cycle:3,payDay:1,remindDays:3,landlord:"Vũ Thị F",phone:"",payMethod:"",payNote:"",note:""},
+  {id:7,name:"CH Phú Nhuận – Nguyễn Kiệm",address:"33 Nguyễn Kiệm, Q.Phú Nhuận",startDate:"2025-09-01",endDate:"2028-08-31",stages:[],rentBase:21000000,cycle:1,payDay:15,remindDays:3,landlord:"Đặng Văn G",phone:"",payMethod:"",payNote:"",note:""},
+  {id:8,name:"CH Bình Dương – Mỹ Phước",address:"12 ĐT741, Mỹ Phước, BD",startDate:"2024-04-01",endDate:"2027-03-31",stages:[{from:"2024-04-01",to:"2025-03-31",rent:11000000},{from:"2025-04-01",to:"2026-03-31",rent:12000000},{from:"2026-04-01",to:"2027-03-31",rent:13200000}],rentBase:0,cycle:1,payDay:5,remindDays:3,landlord:"Ngô Thị H",phone:"",payMethod:"",payNote:"",note:"Ký 3 năm, tăng 10%/năm"},
+  {id:9,name:"CH Long An – Tân An",address:"67 Hùng Vương, Tân An, LA",startDate:"2025-11-01",endDate:"2028-10-31",stages:[],rentBase:9500000,cycle:1,payDay:5,remindDays:3,landlord:"Lý Văn I",phone:"",payMethod:"",payNote:"",note:""},
+  {id:10,name:"CH Bình Dương – Dĩ An",address:"45 Nguyễn An Ninh, Dĩ An, BD",startDate:"2025-02-01",endDate:"2028-01-31",stages:[],rentBase:11000000,cycle:1,payDay:3,remindDays:3,landlord:"Trương Thị K",phone:"",payMethod:"",payNote:"",note:""},
+  {id:11,name:"CH Đồng Nai – Biên Hòa",address:"23 Đồng Khởi, TP.Biên Hòa",startDate:"2024-07-01",endDate:"2027-06-30",stages:[{from:"2024-07-01",to:"2026-06-30",rent:13500000},{from:"2026-07-01",to:"2027-06-30",rent:14500000}],rentBase:0,cycle:3,payDay:1,remindDays:3,landlord:"Mai Văn L",phone:"",payMethod:"",payNote:"",note:""},
+  {id:12,name:"CH Quận 7 – Nguyễn Thị Thập",address:"101 Nguyễn Thị Thập, Q.7",startDate:"2025-05-01",endDate:"2028-04-30",stages:[{from:"2025-05-01",to:"2026-04-30",rent:22000000},{from:"2026-05-01",to:"2028-04-30",rent:25000000}],rentBase:0,cycle:1,payDay:5,remindDays:3,landlord:"Đinh Thị M",phone:"",payMethod:"",payNote:"",note:"Vị trí đắc địa"},
+  {id:13,name:"CH Quận 10 – 3/2",address:"88 Đường 3/2, Q.10, TP.HCM",startDate:"2025-04-01",endDate:"2028-03-31",stages:[],rentBase:17500000,cycle:1,payDay:10,remindDays:3,landlord:"Bùi Văn N",phone:"",payMethod:"",payNote:"",note:""},
+  {id:14,name:"CH Hóc Môn – Quốc lộ 22",address:"450 QL22, Hóc Môn, TP.HCM",startDate:"2025-01-01",endDate:"2027-12-31",stages:[],rentBase:8000000,cycle:1,payDay:5,remindDays:3,landlord:"Cao Thị O",phone:"",payMethod:"",payNote:"",note:""},
+  {id:15,name:"CH Nhà Bè – Huỳnh Tấn Phát",address:"234 Huỳnh Tấn Phát, Nhà Bè",startDate:"2025-06-01",endDate:"2028-05-31",stages:[{from:"2025-06-01",to:"2026-05-31",rent:9000000},{from:"2026-06-01",to:"2028-05-31",rent:10000000}],rentBase:0,cycle:1,payDay:5,remindDays:3,landlord:"Tô Văn P",phone:"",payMethod:"",payNote:"",note:""},
+];
+
+let data=JSON.parse(localStorage.getItem('leaseDataV2')||'null')||DEFAULT_DATA;
+let sortField='daysLeft',sortAsc=true,editId=null;
+function saveData(){localStorage.setItem('leaseDataV2',JSON.stringify(data))}
+
+function getCurrentRent(item){
+  const todayStr=TODAY.toISOString().slice(0,10);
+  if(item.stages&&item.stages.length>0){
+    const active=item.stages.find(s=>s.from<=todayStr&&s.to>=todayStr);
+    if(active) return active.rent;
+    const sorted=[...item.stages].sort((a,b)=>a.from.localeCompare(b.from));
+    return sorted[sorted.length-1].rent;
+  }
+  return item.rentBase||0;
+}
+
+function getStageInfo(item){
+  const todayStr=TODAY.toISOString().slice(0,10);
+  if(!item.stages||item.stages.length===0) return{stageNum:0,totalStages:0,nextStage:null,daysToNext:null};
+  const sorted=[...item.stages].sort((a,b)=>a.from.localeCompare(b.from));
+  const idx=sorted.findIndex(s=>s.from<=todayStr&&s.to>=todayStr);
+  const totalStages=sorted.length;
+  if(idx===-1) return{stageNum:totalStages,totalStages,nextStage:null,daysToNext:null};
+  const nextStage=idx+1<totalStages?sorted[idx+1]:null;
+  const daysToNext=nextStage?Math.round((parseD(nextStage.from)-TODAY)/86400000):null;
+  return{stageNum:idx+1,totalStages,nextStage,daysToNext};
+}
+
+function getNextPayDate(item){
+  const cycle=parseInt(item.cycle)||1,payDay=parseInt(item.payDay)||5;
+  let d=new Date(TODAY);d.setDate(payDay);d.setHours(0,0,0,0);
+  if(d<=TODAY) d.setMonth(d.getMonth()+cycle);
+  return d;
+}
+function getPayStatus(item){
+  const next=getNextPayDate(item),diff=Math.round((next-TODAY)/86400000),rd=parseInt(item.remindDays)||3;
+  if(diff<0) return{label:'Trễ TT',cls:'badge-danger',key:'overdue',diff};
+  if(diff===0) return{label:'Hôm nay!',cls:'badge-danger',key:'overdue',diff};
+  if(diff<=rd) return{label:`Còn ${diff} ngày`,cls:'badge-danger',key:'soon3',diff};
+  if(diff<=7) return{label:`Còn ${diff} ngày`,cls:'badge-warn',key:'soon7',diff};
+  return{label:`Còn ${diff} ngày`,cls:'badge-ok',key:'ok',diff};
+}
+function getContractStatus(dl){
+  if(dl<0) return{label:'Hết hạn',cls:'badge-critical',barCls:'bar-purple',key:'expired'};
+  if(dl<=30) return{label:`${dl} ngày`,cls:'badge-danger',barCls:'bar-red',key:'danger'};
+  if(dl<=90) return{label:`${dl} ngày`,cls:'badge-warn',barCls:'bar-yellow',key:'warn'};
+  return{label:`${dl} ngày`,cls:'badge-ok',barCls:'bar-green',key:'ok'};
+}
+function getBarPct(item){
+  const s=parseD(item.startDate),e=parseD(item.endDate);
+  if(!s||!e) return 0;
+  return Math.max(0,Math.min(100,Math.round((e-TODAY)/(e-s)*100)));
+}
+
+function updateKPIs(){
+  let expired=0,danger=0,warn=0,overdue=0,soon=0,totalRent=0;
+  data.forEach(item=>{
+    const dl=daysLeft(item.endDate);
+    if(dl<0) expired++; else if(dl<=30) danger++; else if(dl<=90) warn++;
+    const ps=getPayStatus(item);
+    if(ps.key==='overdue') overdue++; else if(ps.key==='soon3') soon++;
+    totalRent+=getCurrentRent(item)||0;
+  });
+  document.getElementById('kpiRow').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Tổng địa điểm</div><div class="kpi-value kv-blue">${data.length}</div><div class="kpi-sub">đang hoạt động</div></div>
+    <div class="kpi"><div class="kpi-label">Sắp hết hạn HĐ</div><div class="kpi-value kv-warn">${warn+danger}</div><div class="kpi-sub">${danger} gấp · ${warn} cần theo dõi</div></div>
+    <div class="kpi"><div class="kpi-label">Đã hết hạn</div><div class="kpi-value kv-danger">${expired}</div><div class="kpi-sub">cần gia hạn ngay</div></div>
+    <div class="kpi"><div class="kpi-label">Nhắc TT (≤3 ngày)</div><div class="kpi-value kv-danger">${soon+overdue}</div><div class="kpi-sub">${overdue} trễ · ${soon} trong 3 ngày</div></div>
+    <div class="kpi"><div class="kpi-label">Tổng thuê/tháng</div><div class="kpi-value kv-ok" style="font-size:17px">${fmtMoney(totalRent)}</div><div class="kpi-sub">giá hiện hành</div></div>`;
+  const ac=document.getElementById('alertContainer'),msgs=[];
+  if(expired>0) msgs.push({type:'danger',txt:`⛔ <strong>${expired} hợp đồng đã hết hạn</strong> — cần gia hạn hoặc ký mới ngay`});
+  if(danger>0) msgs.push({type:'danger',txt:`🔴 <strong>${danger} hợp đồng còn ≤ 30 ngày</strong> — cần đàm phán gia hạn`});
+  if(warn>0) msgs.push({type:'warn',txt:`🟡 <strong>${warn} hợp đồng còn 31–90 ngày</strong> — theo dõi sát`});
+  if(overdue>0) msgs.push({type:'danger',txt:`💸 <strong>${overdue} khoản tiền thuê bị trễ</strong> — cần thanh toán ngay`});
+  ac.innerHTML=msgs.map(m=>`<div class="alert-bar ${m.type}"><span>⚠</span><div class="alert-items"><div class="alert-row">${m.txt}</div></div></div>`).join('');
+  const remItems=data.map(item=>{
+    const ps=getPayStatus(item),next=getNextPayDate(item);
+    if(ps.key==='overdue'||ps.key==='soon3') return{item,ps,next,priority:ps.key==='overdue'?0:1};
+    return null;
+  }).filter(Boolean).sort((a,b)=>a.priority-b.priority||(a.ps.diff-b.ps.diff));
+  document.getElementById('reminderCount').textContent=remItems.length||'';
+  document.getElementById('reminderCount').style.display=remItems.length?'':'none';
+  document.getElementById('reminderList').innerHTML=remItems.length===0
+    ?`<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px">✅ Không có lịch thanh toán cần nhắc</div>`
+    :remItems.map(r=>{
+      const cls=r.ps.key==='overdue'?'r-danger':'r-warn',ico=r.ps.key==='overdue'?'🚨':'🔔';
+      return`<div class="reminder-item ${cls}"><span class="reminder-icon">${ico}</span><div class="reminder-text"><strong>${r.item.name}</strong><span>${r.ps.key==='overdue'?'Trễ thanh toán!':'Đến hạn trong '+r.ps.diff+' ngày'} · Ngày TT: <b>${fmt(r.next)}</b> · <b>${fmtMoney(getCurrentRent(r.item))}</b>${r.item.payMethod?' · '+r.item.payMethod:''}</span></div><button class="action-btn" onclick="openEditModal(${r.item.id})">Chi tiết</button></div>`;
+    }).join('');
+  if(remItems.length>0){document.getElementById('reminderBody').classList.add('open');document.getElementById('reminderToggleIcon').textContent='▲ Thu gọn';}
+}
+
+function toggleReminder(){
+  const b=document.getElementById('reminderBody'),ic=document.getElementById('reminderToggleIcon');
+  b.classList.toggle('open');ic.textContent=b.classList.contains('open')?'▲ Thu gọn':'▼ Mở rộng';
+}
+
+function renderTable(){
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  const fSt=document.getElementById('filterStatus').value,fPay=document.getElementById('filterPay').value;
+  let rows=data.map(item=>{
+    const dl=daysLeft(item.endDate),st=getContractStatus(dl),next=getNextPayDate(item),ps=getPayStatus(item),currentRent=getCurrentRent(item),si=getStageInfo(item);
+    return{...item,dl,st,next,ps,currentRent,si};
+  });
+  if(search) rows=rows.filter(r=>(r.name+r.address+(r.landlord||'')).toLowerCase().includes(search));
+  if(fSt) rows=rows.filter(r=>r.st.key===fSt);
+  if(fPay) rows=rows.filter(r=>r.ps.key===fPay);
+  rows.sort((a,b)=>{
+    let va=a[sortField],vb=b[sortField];
+    if(sortField==='currentRent'){va=a.currentRent;vb=b.currentRent;}
+    if(sortField==='nextPayDate'){va=a.next;vb=b.next;}
+    if(sortField==='endDate'){va=new Date(a.endDate);vb=new Date(b.endDate);}
+    if(va<vb) return sortAsc?-1:1;if(va>vb) return sortAsc?1:-1;return 0;
+  });
+  const tb=document.getElementById('tableBody');
+  if(!rows.length){tb.innerHTML='';document.getElementById('emptyMsg').style.display='block';return;}
+  document.getElementById('emptyMsg').style.display='none';
+  tb.innerHTML=rows.map(r=>{
+    const pct=getBarPct(r),hasStages=r.stages&&r.stages.length>0;
+    const stageLabel=hasStages?`<span class="badge badge-blue rent-stage-badge">GĐ ${r.si.stageNum}/${r.si.totalStages}</span>`:'';
+    const upcomingLabel=r.si.nextStage&&r.si.daysToNext!==null&&r.si.daysToNext<=60?`<div class="rent-upcoming">↑ ${fmtMoney(r.si.nextStage.rent)} sau ${r.si.daysToNext} ngày</div>`:'';
+    return`<tr>
+      <td class="location-cell">${r.name}<small>📍 ${r.address||'—'}${r.landlord?` · ${r.landlord}`:''}${r.phone?` · ${r.phone}`:''}</small></td>
+      <td><div style="font-weight:600">${fmt(r.endDate)}</div><div style="font-size:11px;color:var(--text-muted)">${r.dl>0?'còn ≈'+Math.ceil(r.dl/30)+' tháng':'HẾT HẠN'}</div></td>
+      <td><div class="days-bar"><div class="bar-track"><div class="bar-fill ${r.st.barCls}" style="width:${pct}%"></div></div><span class="days-num">${r.dl<0?'HẾT':r.dl+'d'}</span></div></td>
+      <td><div class="rent-cell"><div class="rent-current">${fmtMoney(r.currentRent)} ${stageLabel}</div>${upcomingLabel}<div style="font-size:11px;color:var(--text-muted)">x${r.cycle}th = ${fmtMoney(r.currentRent*r.cycle)}</div></div></td>
+      <td><div class="pay-cell"><div class="pay-date">${fmt(r.next)}</div><span class="badge ${r.ps.cls}" style="margin-top:3px;font-size:10px;padding:2px 7px">${r.ps.label}</span></div></td>
+      <td><span class="badge ${r.st.cls}">${r.dl<0?'⚠ HẾT HẠN':r.dl<=30?'🔴 '+r.st.label:r.dl<=90?'🟡 '+r.st.label:'🟢 '+r.st.label}</span></td>
+      <td><div class="actions-cell"><button class="action-btn" onclick="openEditModal(${r.id})">✏ Sửa</button><button class="action-btn" onclick="openStagesModal(${r.id})">💰 Giá</button><button class="action-btn red" onclick="confirmDelete(${r.id})">🗑 Xóa</button></div></td>
+    </tr>`;
+  }).join('');
+}
+
+function sortBy(f){
+  if(sortField===f) sortAsc=!sortAsc; else{sortField=f;sortAsc=true;}
+  document.querySelectorAll('.sort-icon').forEach(e=>e.textContent='↕');
+  const el=document.getElementById('sort-'+f);
+  if(el){el.textContent=sortAsc?'↑':'↓';el.closest('th').classList.add('sorted');}
+  renderTable();
+}
+
+let editStages=[];
+function switchTab(tabId,btn){
+  document.querySelectorAll('.tab-panel').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');btn.classList.add('active');
+}
+function openAddModal(){
+  editId=null;editStages=[];
+  document.getElementById('modalTitle').textContent='➕ Thêm địa điểm mới';
+  document.getElementById('deleteBtn').style.display='none';
+  clearForm();renderStagesList();
+  switchTab('tab-info',document.querySelector('.modal-tab'));
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function openEditModal(id){
+  const item=data.find(d=>d.id==id);if(!item) return;
+  editId=id;editStages=JSON.parse(JSON.stringify(item.stages||[]));
+  document.getElementById('modalTitle').textContent='✏ Chỉnh sửa: '+item.name;
+  document.getElementById('deleteBtn').style.display='block';
+  fillForm(item);renderStagesList();
+  switchTab('tab-info',document.querySelector('.modal-tab'));
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function openStagesModal(id){
+  const item=data.find(d=>d.id==id);if(!item) return;
+  editId=id;editStages=JSON.parse(JSON.stringify(item.stages||[]));
+  document.getElementById('modalTitle').textContent='💰 Bảng giá thuê: '+item.name;
+  document.getElementById('deleteBtn').style.display='none';
+  fillForm(item);renderStagesList();
+  const tabs=document.querySelectorAll('.modal-tab');
+  switchTab('tab-stages',tabs[1]);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function clearForm(){
+  ['name','address','start','end','landlord','phone','note','rent-base','payNote'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value='';});
+  document.getElementById('f-cycle').value='1';document.getElementById('f-payDay').value='5';
+  document.getElementById('f-remindDays').value='3';document.getElementById('f-payMethod').value='';
+}
+function fillForm(item){
+  document.getElementById('f-name').value=item.name||'';
+  document.getElementById('f-address').value=item.address||'';
+  document.getElementById('f-start').value=item.startDate||'';
+  document.getElementById('f-end').value=item.endDate||'';
+  document.getElementById('f-landlord').value=item.landlord||'';
+  document.getElementById('f-phone').value=item.phone||'';
+  document.getElementById('f-note').value=item.note||'';
+  document.getElementById('f-rent-base').value=item.rentBase||'';
+  document.getElementById('f-cycle').value=item.cycle||1;
+  document.getElementById('f-payDay').value=item.payDay||5;
+  document.getElementById('f-remindDays').value=item.remindDays||3;
+  document.getElementById('f-payMethod').value=item.payMethod||'';
+  document.getElementById('f-payNote').value=item.payNote||'';
+}
+function addStageRow(stage){
+  if(!stage) stage={from:'',to:'',rent:''};
+  editStages.push(stage);sortEditStages();renderStagesList();
+}
+function sortEditStages(){
+  editStages.sort((a,b)=>{
+    if(!a.from&&!b.from) return 0;if(!a.from) return 1;if(!b.from) return -1;
+    return a.from.localeCompare(b.from);
+  });
+}
+function validateStages(){
+  const filled=editStages.filter(s=>s.from&&s.to);
+  if(!filled.length) return null;
+  const sorted=[...filled].sort((a,b)=>a.from.localeCompare(b.from));
+  for(let i=0;i<sorted.length;i++){
+    if(sorted[i].from>=sorted[i].to) return `Giai đoạn ${i+1}: Ngày bắt đầu phải trước ngày kết thúc`;
+    if(i>0&&sorted[i].from<=sorted[i-1].to) return `Giai đoạn ${i+1} bị chồng lấn với giai đoạn trước`;
+  }
+  return null;
+}
+function renderStagesList(){
+  const el=document.getElementById('stagesList'),errEl=document.getElementById('stagesError');
+  if(errEl) errEl.textContent='';
+  if(!editStages.length){el.innerHTML='<div class="empty-stages">Chưa có giai đoạn nào.</div>';return;}
+  const todayStr=TODAY.toISOString().slice(0,10);
+  el.innerHTML=editStages.map((s,i)=>{
+    const isActive=s.from&&s.to&&s.from<=todayStr&&s.to>=todayStr;
+    const isFuture=s.from&&s.from>todayStr;
+    const statusTag=isActive?'<span style="color:#2d9e6b;font-size:11px;font-weight:700">● Hiện hành</span>':isFuture?'<span style="color:#4361ee;font-size:11px">◦ Sắp tới</span>':'<span style="color:#9499b5;font-size:11px">◦ Đã qua</span>';
+    return`<div class="stage-row" style="${isActive?'border-color:#2d9e6b;background:#f0fdf4':''}">
+      <div class="form-group"><label class="lbl">Từ ngày * ${statusTag}</label><input type="date" value="${s.from}" onchange="editStages[${i}].from=this.value;sortEditStages();renderStagesList()"></div>
+      <div class="form-group"><label class="lbl">Đến ngày *</label><input type="date" value="${s.to}" onchange="editStages[${i}].to=this.value;sortEditStages();renderStagesList()"></div>
+      <div class="form-group"><label class="lbl">Tiền thuê/tháng *</label><input type="number" value="${s.rent}" placeholder="VNĐ" onchange="editStages[${i}].rent=parseFloat(this.value)||0"></div>
+      <button class="del-btn" onclick="removeStage(${i})">🗑</button>
+    </div>`;
+  }).join('');
+}
+function removeStage(i){editStages.splice(i,1);renderStagesList();}
+function saveLocation(){
+  const name=document.getElementById('f-name').value.trim();
+  const startDate=document.getElementById('f-start').value,endDate=document.getElementById('f-end').value;
+  if(!name||!startDate||!endDate){showToast('⚠ Điền đầy đủ: Tên, ngày bắt đầu, ngày kết thúc');return;}
+  const rentBase=parseFloat(document.getElementById('f-rent-base').value)||0;
+  if(!editStages.length&&!rentBase){showToast('⚠ Nhập giá thuê cơ bản hoặc thêm giai đoạn giá thuê');return;}
+  const stageErr=validateStages();
+  if(stageErr){
+    const errEl=document.getElementById('stagesError');
+    if(errEl) errEl.textContent='⚠ '+stageErr;
+    switchTab('tab-stages',document.querySelectorAll('.modal-tab')[1]);
+    showToast('⚠ '+stageErr);return;
+  }
+  const item={name,startDate,endDate,
+    address:document.getElementById('f-address').value.trim(),
+    landlord:document.getElementById('f-landlord').value.trim(),
+    phone:document.getElementById('f-phone').value.trim(),
+    note:document.getElementById('f-note').value.trim(),
+    stages:editStages.filter(s=>s.from&&s.to&&s.rent),rentBase,
+    cycle:parseInt(document.getElementById('f-cycle').value)||1,
+    payDay:parseInt(document.getElementById('f-payDay').value)||5,
+    remindDays:parseInt(document.getElementById('f-remindDays').value)||3,
+    payMethod:document.getElementById('f-payMethod').value,
+    payNote:document.getElementById('f-payNote').value.trim(),
+  };
+  if(editId){
+    const idx=data.findIndex(d=>d.id==editId);
+    data[idx]={...data[idx],...item};showToast('✅ Đã cập nhật thành công');
+  } else {
+    item.id=Date.now();data.push(item);showToast('✅ Đã thêm địa điểm mới');
+  }
+  saveData();closeModal();updateKPIs();renderTable();
+}
+function deleteLocation(){
+  if(!editId) return;
+  const item=data.find(d=>d.id==editId);
+  confirmDeleteFn(editId,item?.name,()=>{closeModal();});
+}
+function confirmDelete(id){
+  const item=data.find(d=>d.id==id);
+  if(!item){showToast('⚠ Không tìm thấy');return;}
+  confirmDeleteFn(id,item.name,null);
+}
+function confirmDeleteFn(id,name,cb){
+  document.getElementById('confirmMsg').textContent='Xóa "'+name+'"? Hành động này không thể hoàn tác.';
+  const overlay=document.getElementById('confirmOverlay');
+  overlay.style.display='flex';
+  document.getElementById('confirmOkBtn').onclick=function(){
+    data=data.filter(d=>d.id!=id);
+    saveData();updateKPIs();renderTable();
+    overlay.style.display='none';
+    if(cb) cb();
+    showToast('🗑 Đã xóa: '+name);
+  };
+}
+function cancelConfirm(){document.getElementById('confirmOverlay').style.display='none';}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function bgClose(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function exportCSV(){
+  const headers=['Tên địa điểm','Địa chỉ','Chủ nhà','Điện thoại','Ngày bắt đầu','Ngày kết thúc','Giá thuê hiện tại','Số giai đoạn','Chu kỳ TT','Ngày TT','Nhắc trước (ngày)','Ngày TT tiếp theo','Trạng thái HĐ','Trạng thái TT'];
+  const rows=data.map(item=>{
+    const dl=daysLeft(item.endDate),st=getContractStatus(dl),ps=getPayStatus(item),next=getNextPayDate(item);
+    return[item.name,item.address,item.landlord,item.phone,item.startDate,item.endDate,getCurrentRent(item),(item.stages||[]).length,item.cycle+'th',item.payDay,item.remindDays,fmt(next),st.label,ps.label]
+      .map(v=>`"${(v??'').toString().replace(/"/g,'""')}"`).join(',');
+  });
+  const csv='﻿'+[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`HopDongThue_${TODAY.toISOString().slice(0,10)}.csv`;a.click();
+  showToast('✅ Đã xuất CSV');
+}
+function resetData(){
+  document.getElementById('confirmMsg').textContent='Xóa toàn bộ dữ liệu và tải lại dữ liệu mẫu mới? Không thể hoàn tác.';
+  const overlay=document.getElementById('confirmOverlay');overlay.style.display='flex';
+  document.getElementById('confirmOkBtn').onclick=function(){
+    overlay.style.display='none';
+    localStorage.removeItem('leaseDataV2');
+    data=JSON.parse(JSON.stringify(DEFAULT_DATA));
+    saveData();updateKPIs();renderTable();
+    showToast('✅ Đã tải lại dữ liệu mẫu mới');
+  };
+}
+updateKPIs();
+renderTable();
+</script>
+</body>
+</html>
